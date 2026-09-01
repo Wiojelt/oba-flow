@@ -505,7 +505,7 @@
       isTopFrame: window.top === window,
       isScormFrame: location.pathname.includes("/uploads/scorm-packages/") && location.pathname.includes("index_lms.html")
     });
-    showStatus("ÖBA Flow 3.0 hazır");
+    showStatus("ÖBA Flow 3.0.1 hazır");
     if (!scheduleStoryStart()) scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
