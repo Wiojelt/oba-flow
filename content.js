@@ -105,6 +105,7 @@
     if (index < 0 || recentlyClicked || !visible(element) || !enabled(element)) return -1;
 
     let score = 100 - index;
+    if (element.matches(".slide-object-vectorshape[data-acc-text]")) score += 80;
     if (element.tagName === "BUTTON") score += 20;
     if (element.getAttribute("role") === "button") score += 10;
 
@@ -275,8 +276,14 @@
           const frame = frameWindow.frameElement;
           if (!frame) throw new Error("Üst çerçeve konumu bulunamadı");
           const frameRect = frame.getBoundingClientRect();
-          clientX += frameRect.left;
-          clientY += frameRect.top;
+          const scaleX = frameWindow.innerWidth > 0
+            ? frameRect.width / frameWindow.innerWidth
+            : 1;
+          const scaleY = frameWindow.innerHeight > 0
+            ? frameRect.height / frameWindow.innerHeight
+            : 1;
+          clientX = frameRect.left + clientX * scaleX;
+          clientY = frameRect.top + clientY * scaleY;
           frameWindow = frameWindow.parent;
         }
       } catch {
@@ -291,9 +298,14 @@
       }, (response) => {
         if (chrome.runtime.lastError || !response?.ok) {
           dispatchSyntheticVectorClick(button, rect.left + rect.width / 2, rect.top + rect.height / 2);
-          console.warn("[ÖBA Flow] Gerçek tıklama kullanılamadı:", response?.error || chrome.runtime.lastError?.message);
+          const error = response?.error || chrome.runtime.lastError?.message || "Bilinmeyen hata";
+          showStatus("ÖBA Flow: tıklama hatası");
+          console.warn("[ÖBA Flow] Gerçek tıklama kullanılamadı:", error);
+        } else {
+          showStatus("ÖBA Flow: içerik başlatıldı");
         }
       });
+      return true;
     } else {
       button.click();
     }
@@ -425,7 +437,7 @@
     scheduleCourseAdvance();
   }, 750);
   setTimeout(() => {
-    showStatus("ÖBA Flow 2.1 hazır");
+    showStatus("ÖBA Flow 2.1.2 hazır");
     scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);

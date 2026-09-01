@@ -1,5 +1,9 @@
 const clicksInFlight = new Set();
 
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.remove("diagnosticLogs");
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type !== "oba-flow-real-click") return false;
 
