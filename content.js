@@ -171,7 +171,9 @@
     return [...document.querySelectorAll(".slide-object-vectorshape[data-acc-text], [data-acc-text]")]
       .find((element) => {
         const label = normalize(element.getAttribute("data-acc-text"));
-        return visible(element) && enabled(element) &&
+        // Storyline üst DIV'e pointer-events:none verebilir; gerçek olayları
+        // içteki SVG path/g öğesi alır. Bu nedenle burada enabled() uygulanmaz.
+        return visible(element) &&
           (label === "başlamak için tıklayınız." || label === "başlamak için tıklayınız");
       }) || null;
   }
@@ -450,7 +452,7 @@
       isTopFrame: window.top === window,
       isScormFrame: location.pathname.includes("/uploads/scorm-packages/") && location.pathname.includes("index_lms.html")
     });
-    showStatus("ÖBA Flow 2.4 hazır");
+    showStatus("ÖBA Flow 2.4.1 hazır");
     if (!scheduleStoryStart()) scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
