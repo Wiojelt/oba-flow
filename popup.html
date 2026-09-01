@@ -18,14 +18,13 @@
         <div>
           <h1>ÖBA Flow</h1>
         </div>
-        <span class="version">2.0.3</span>
+        <span class="version">2.0.4</span>
       </header>
 
       <section class="panel">
         <label class="setting-row">
           <span>
-            <strong>Otomatik ileri</strong>
-            <small>Başlat ve etkinleşen İLERİ düğmesine basar</small>
+            <strong>Otomatik ilerlet</strong>
           </span>
           <input id="enabled" class="toggle-input" type="checkbox">
           <span class="toggle" aria-hidden="true"></span>
@@ -33,8 +32,7 @@
 
         <label class="setting-row">
           <span>
-            <strong>İçerik geçişi</strong>
-            <small>check_circle sonrası sıradakine geçer</small>
+            <strong>Sonraki içeriğe geç</strong>
           </span>
           <input id="courseAdvanceEnabled" class="toggle-input" type="checkbox">
           <span class="toggle" aria-hidden="true"></span>
@@ -45,7 +43,6 @@
         <div class="delay-heading">
           <span>
             <strong>Tıklama gecikmesi</strong>
-            <small>İleri etkinleştikten sonra</small>
           </span>
           <output id="delayValue" for="delaySeconds">1,0 sn</output>
         </div>
@@ -56,7 +53,17 @@
       <footer>
         <span class="status-dot"></span>
         <span id="saved" role="status" aria-live="polite">Hazır</span>
-        <span class="contact">@wiojelt</span>
+        <div class="social">
+          <span class="handle">@wiojelt</span>
+          <div class="social-links">
+            <a class="social-link" href="https://twitter.com/wiojelt" target="_blank" rel="noreferrer" aria-label="Twitter">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2h3.7l-8.1 9.2L24 22h-7.4l-5.8-7.6L4.1 22H.4l8.7-10L0 2h7.6l5.2 6.9L18.9 2Zm-1.3 18.1h2L6.5 3.8H4.4l13.2 16.3Z"/></svg>
+            </a>
+            <a class="social-link" href="https://github.com/Wiojelt" target="_blank" rel="noreferrer" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .7A11.5 11.5 0 0 0 8.4 23c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.8 5.4-5.5 5.7.4.4.8 1.1.8 2.1v3.2c0 .4.2.7.8.6A11.5 11.5 0 0 0 12 .7Z"/></svg>
+            </a>
+          </div>
+        </div>
       </footer>
     </main>
     <script src="popup.js"></script>

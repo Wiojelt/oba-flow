@@ -21,6 +21,6 @@ Popup üzerinden otomatik ileri ve içerik geçişi ayrı ayrı kapatılabilir. 
 - Sekme görünürlüğünü ya da tarayıcı odak durumunu taklit etmez.
 - `Tamamla` veya `Bitir` düğmelerine basmaz.
 
-Erişim ve iletişim: **@wiojelt**
+Erişim ve iletişim: [Twitter @wiojelt](https://twitter.com/wiojelt) · [GitHub @Wiojelt](https://github.com/Wiojelt)
 
 Copyright © 2026 wiojelt. All rights reserved.

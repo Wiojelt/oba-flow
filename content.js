@@ -87,6 +87,7 @@
     if (element instanceof HTMLInputElement) return normalize(element.value);
     return normalize(
       element.getAttribute("aria-label") ||
+      element.getAttribute("data-acc-text") ||
       element.getAttribute("title") ||
       element.textContent
     );
@@ -139,6 +140,7 @@
   function findNextButton() {
     const selectors = [
       "#mobile-start-button",
+      "[data-acc-text]",
       "button",
       "a[href]",
       "[role='button']",
@@ -260,8 +262,59 @@
     lastClickedLabel = currentLabel;
     lastClickAt = now;
     lastClickedUrl = location.href;
-    button.scrollIntoView({ block: "center", behavior: "smooth" });
-    button.click();
+    button.scrollIntoView({ block: "center", behavior: "auto" });
+
+    if (button.matches("[data-acc-text], .slide-object-vectorshape")) {
+      button.focus?.({ preventScroll: true });
+      const rect = button.getBoundingClientRect();
+      const clientX = rect.left + rect.width / 2;
+      const clientY = rect.top + rect.height / 2;
+      const pointed = document.elementFromPoint(clientX, clientY);
+      const eventTarget = pointed && button.contains(pointed)
+        ? pointed
+        : button.querySelector("[data-accepts='events']") || button;
+      const base = {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        view: window,
+        clientX,
+        clientY,
+        button: 0,
+        buttons: 1
+      };
+
+      for (const type of ["pointerover", "pointerenter", "pointermove"]) {
+        const EventType = typeof PointerEvent === "function" ? PointerEvent : MouseEvent;
+        eventTarget.dispatchEvent(new EventType(type, { ...base, pointerId: 1, pointerType: "mouse", isPrimary: true }));
+      }
+      for (const type of ["mouseover", "mouseenter", "mousemove"]) {
+        eventTarget.dispatchEvent(new MouseEvent(type, base));
+      }
+      if (typeof PointerEvent === "function") {
+        eventTarget.dispatchEvent(new PointerEvent("pointerdown", {
+          ...base,
+          pointerId: 1,
+          pointerType: "mouse",
+          isPrimary: true
+        }));
+      }
+      eventTarget.dispatchEvent(new MouseEvent("mousedown", base));
+      if (typeof PointerEvent === "function") {
+        eventTarget.dispatchEvent(new PointerEvent("pointerup", {
+          ...base,
+          buttons: 0,
+          pointerId: 1,
+          pointerType: "mouse",
+          isPrimary: true
+        }));
+      }
+      for (const type of ["mouseup", "click"]) {
+        eventTarget.dispatchEvent(new MouseEvent(type, { ...base, buttons: 0 }));
+      }
+    } else {
+      button.click();
+    }
     const clickedLabel = currentLabel;
     showStatus(/^(başlamak için|kursu başlat)/.test(clickedLabel)
       ? "ÖBA Flow: içerik başlatıldı"
@@ -343,7 +396,7 @@
     scheduleCourseAdvance();
   }, 750);
   setTimeout(() => {
-    showStatus("ÖBA Flow 2.0.3 hazır");
+    showStatus("ÖBA Flow 2.0.4 hazır");
     scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);

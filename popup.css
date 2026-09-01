@@ -89,7 +89,6 @@ h1 {
 
 .setting-row + .setting-row { border-top: 1px solid rgba(255,255,255,.07); }
 strong { display: block; font-size: 13px; font-weight: 700; }
-small { display: block; margin-top: 3px; color: #8f9bab; font-size: 10px; line-height: 1.35; }
 
 .toggle-input {
   position: absolute;
@@ -169,4 +168,44 @@ footer {
   box-shadow: 0 0 12px rgba(78,224,160,.8);
 }
 
-.contact { margin-left: auto; color: #7e8da0; }
+.social {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.handle { color: #7e8da0; cursor: default; }
+
+.social-links {
+  display: flex;
+  gap: 4px;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: width .2s ease, opacity .2s ease, transform .2s ease;
+}
+
+.social:hover .social-links,
+.social:focus-within .social-links {
+  width: 54px;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.social-link {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  color: #a9e8ff;
+  background: rgba(255,255,255,.055);
+}
+
+.social-link:hover { border-color: rgba(103,215,255,.5); background: rgba(75,199,255,.14); }
+.social-link svg { width: 13px; height: 13px; fill: currentColor; }
