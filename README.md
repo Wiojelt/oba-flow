@@ -4,6 +4,8 @@
 
 ÖBA içeriklerinde görünen **Kursu Başlat** / **Başlamak için tıklayınız** düğmelerini ve video sonunda etkinleşen **İLERİ** düğmesini kullanır. Mevcut içerik `check_circle` ile tamamlandığında listedeki hemen sonraki kilidi açılmış içeriğe geçebilir.
 
+SCORM oynatıcısının yalnızca gerçek fare girdisi kabul eden başlangıç katmanı için tıklama anında Brave'in hata ayıklama girdisi kullanılır ve bağlantı hemen kapatılır. Bu tıklama sırasında aynı sekmede DevTools açık olmamalıdır.
+
 ## Kurulum
 
 1. ZIP'i bir klasöre çıkarın.

@@ -265,10 +265,48 @@
     button.scrollIntoView({ block: "center", behavior: "auto" });
 
     if (button.matches("[data-acc-text], .slide-object-vectorshape")) {
-      button.focus?.({ preventScroll: true });
       const rect = button.getBoundingClientRect();
-      const clientX = rect.left + rect.width / 2;
-      const clientY = rect.top + rect.height / 2;
+      let clientX = rect.left + rect.width / 2;
+      let clientY = rect.top + rect.height / 2;
+      let frameWindow = window;
+
+      try {
+        while (frameWindow !== frameWindow.top) {
+          const frame = frameWindow.frameElement;
+          if (!frame) throw new Error("Üst çerçeve konumu bulunamadı");
+          const frameRect = frame.getBoundingClientRect();
+          clientX += frameRect.left;
+          clientY += frameRect.top;
+          frameWindow = frameWindow.parent;
+        }
+      } catch {
+        dispatchSyntheticVectorClick(button, rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return true;
+      }
+
+      chrome.runtime.sendMessage({
+        type: "oba-flow-real-click",
+        x: clientX,
+        y: clientY
+      }, (response) => {
+        if (chrome.runtime.lastError || !response?.ok) {
+          dispatchSyntheticVectorClick(button, rect.left + rect.width / 2, rect.top + rect.height / 2);
+          console.warn("[ÖBA Flow] Gerçek tıklama kullanılamadı:", response?.error || chrome.runtime.lastError?.message);
+        }
+      });
+    } else {
+      button.click();
+    }
+    const clickedLabel = currentLabel;
+    showStatus(/^(başlamak için|kursu başlat)/.test(clickedLabel)
+      ? "ÖBA Flow: içerik başlatıldı"
+      : "ÖBA Flow: İLERİ tıklandı");
+    console.info("[ÖBA Flow] Tıklandı:", clickedLabel);
+    return true;
+  }
+
+  function dispatchSyntheticVectorClick(button, clientX, clientY) {
+      button.focus?.({ preventScroll: true });
       const pointed = document.elementFromPoint(clientX, clientY);
       const eventTarget = pointed && button.contains(pointed)
         ? pointed
@@ -312,15 +350,6 @@
       for (const type of ["mouseup", "click"]) {
         eventTarget.dispatchEvent(new MouseEvent(type, { ...base, buttons: 0 }));
       }
-    } else {
-      button.click();
-    }
-    const clickedLabel = currentLabel;
-    showStatus(/^(başlamak için|kursu başlat)/.test(clickedLabel)
-      ? "ÖBA Flow: içerik başlatıldı"
-      : "ÖBA Flow: İLERİ tıklandı");
-    console.info("[MEBBIS Video Sonunda İleri] Tıklandı:", labelOf(button));
-    return true;
   }
 
   function scheduleActiveButtonClick() {
@@ -396,7 +425,7 @@
     scheduleCourseAdvance();
   }, 750);
   setTimeout(() => {
-    showStatus("ÖBA Flow 2.0.4 hazır");
+    showStatus("ÖBA Flow 2.1 hazır");
     scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
