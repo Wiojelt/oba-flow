@@ -148,29 +148,23 @@ async function resolveStoryStartPoint(target, session) {
   return mapFramePointToMain(target, session.framesById, session.frame.id, quadCenter(quad));
 }
 
-async function dispatchMouseActivation(target, session) {
-  let point = await resolveStoryStartPoint(target, session);
+async function dispatchMouseActivation(target, session, suppliedPoint) {
+  const point = suppliedPoint || await resolveStoryStartPoint(target, session);
   await chrome.debugger.sendCommand(target, "Input.dispatchMouseEvent", {
     type: "mouseMoved", x: point.x, y: point.y, button: "none", pointerType: "mouse"
   });
   await wait(120);
-  point = await resolveStoryStartPoint(target, session);
   await chrome.debugger.sendCommand(target, "Input.dispatchMouseEvent", {
     type: "mousePressed", x: point.x, y: point.y, button: "left", buttons: 1, clickCount: 1, pointerType: "mouse"
   });
   await wait(130);
-  try {
-    point = await resolveStoryStartPoint(target, session);
-  } catch {
-    // Storyline basılma sırasında SVG yolunu değiştirebilir; aynı noktada bırak.
-  }
   await chrome.debugger.sendCommand(target, "Input.dispatchMouseEvent", {
     type: "mouseReleased", x: point.x, y: point.y, button: "left", buttons: 0, clickCount: 1, pointerType: "mouse"
   });
 }
 
-async function dispatchTapActivation(target, session) {
-  const point = await resolveStoryStartPoint(target, session);
+async function dispatchTapActivation(target, session, suppliedPoint) {
+  const point = suppliedPoint || await resolveStoryStartPoint(target, session);
   await chrome.debugger.sendCommand(target, "Input.synthesizeTapGesture", {
     x: point.x, y: point.y, duration: 120, tapCount: 1, gestureSourceType: "touch"
   });
@@ -198,11 +192,11 @@ async function dispatchKeyboardActivation(target, session) {
   await chrome.debugger.sendCommand(target, "Input.dispatchKeyEvent", { type: "keyUp", ...key });
 }
 
-async function activateStoryStart(target, session) {
-  await dispatchMouseActivation(target, session);
+async function activateStoryStart(target, session, suppliedPoint) {
+  await dispatchMouseActivation(target, session, suppliedPoint);
   await wait(350);
   if (!await storyStartStillVisible(target, session)) return "Fare ile başlatıldı";
-  await dispatchTapActivation(target, session);
+  await dispatchTapActivation(target, session, suppliedPoint);
   await wait(450);
   if (!await storyStartStillVisible(target, session)) return "Dokunma ile başlatıldı";
   await dispatchKeyboardActivation(target, session);
@@ -235,7 +229,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       await chrome.debugger.attach(target, "1.3");
       attached = true;
       const session = await createStorySession(target, sender.url);
-      const result = await activateStoryStart(target, session);
+      const suppliedPoint = Number.isFinite(message.point?.x) && Number.isFinite(message.point?.y)
+        ? { x: message.point.x, y: message.point.y }
+        : null;
+      const result = await activateStoryStart(target, session, suppliedPoint);
       await chrome.debugger.sendCommand(target, "Runtime.releaseObjectGroup", { objectGroup: "oba-flow-click" });
       setLastAction(result);
       sendResponse({ ok: true });

@@ -178,6 +178,36 @@
       }) || null;
   }
 
+  function mainViewportPoint(element) {
+    const target = element.querySelector("path[data-accepts='events']") ||
+      element.querySelector("g[data-accepts='events'] path") ||
+      element.querySelector("[data-accepts='events']") || element;
+    const targetRect = target.getBoundingClientRect();
+    let point = {
+      x: targetRect.left + targetRect.width / 2,
+      y: targetRect.top + targetRect.height / 2
+    };
+    let currentWindow = window;
+
+    try {
+      while (currentWindow !== currentWindow.top) {
+        const frame = currentWindow.frameElement;
+        if (!frame) return null;
+        const frameRect = frame.getBoundingClientRect();
+        const contentWidth = Math.max(1, frame.clientWidth);
+        const contentHeight = Math.max(1, frame.clientHeight);
+        point = {
+          x: frameRect.left + frame.clientLeft + point.x * contentWidth / Math.max(1, currentWindow.innerWidth),
+          y: frameRect.top + frame.clientTop + point.y * contentHeight / Math.max(1, currentWindow.innerHeight)
+        };
+        currentWindow = currentWindow.parent;
+      }
+      return point;
+    } catch {
+      return null;
+    }
+  }
+
   function scheduleStoryStart() {
     if (!settings.enabled || storyStartRequestInFlight) return false;
     const vector = findStoryStartVector();
@@ -189,7 +219,11 @@
     storyStartRequestInFlight = true;
     lastStoryStartKey = key;
     lastStoryStartRequestAt = Date.now();
-    chrome.runtime.sendMessage({ type: "oba-flow-real-click", label: labelOf(vector) }, (response) => {
+    chrome.runtime.sendMessage({
+      type: "oba-flow-real-click",
+      label: labelOf(vector),
+      point: mainViewportPoint(vector)
+    }, (response) => {
       storyStartRequestInFlight = false;
       if (chrome.runtime.lastError || !response?.ok) {
         const error = response?.error || chrome.runtime.lastError?.message || "Bilinmeyen hata";
@@ -452,7 +486,7 @@
       isTopFrame: window.top === window,
       isScormFrame: location.pathname.includes("/uploads/scorm-packages/") && location.pathname.includes("index_lms.html")
     });
-    showStatus("ÖBA Flow 2.4.1 hazır");
+    showStatus("ÖBA Flow 2.4.2 hazır");
     if (!scheduleStoryStart()) scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
