@@ -2,7 +2,7 @@
 
 # ÖBA Flow
 
-ÖBA içeriklerinde görünen **Başlamak için tıklayınız** düğmesini ve video sonunda etkinleşen **İLERİ** düğmesini kullanır. Mevcut içerik `check_circle` ile tamamlandığında listedeki hemen sonraki kilidi açılmış içeriğe geçebilir.
+ÖBA içeriklerinde görünen **Kursu Başlat** / **Başlamak için tıklayınız** düğmelerini ve video sonunda etkinleşen **İLERİ** düğmesini kullanır. Mevcut içerik `check_circle` ile tamamlandığında listedeki hemen sonraki kilidi açılmış içeriğe geçebilir.
 
 ## Kurulum
 

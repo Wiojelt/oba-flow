@@ -16,7 +16,8 @@
     "sonraki ders",
     "eğitime devam et",
     "başlamak için tıklayınız.",
-    "başlamak için tıklayınız"
+    "başlamak için tıklayınız",
+    "kursu başlat"
   ];
 
   let settings = { ...DEFAULTS };
@@ -132,6 +133,7 @@
 
   function findNextButton() {
     const selectors = [
+      "#mobile-start-button",
       "button",
       "a[href]",
       "[role='button']",
@@ -253,7 +255,7 @@
     button.scrollIntoView({ block: "center", behavior: "smooth" });
     button.click();
     const clickedLabel = labelOf(button);
-    showStatus(clickedLabel.startsWith("başlamak için")
+    showStatus(/^(başlamak için|kursu başlat)/.test(clickedLabel)
       ? "ÖBA Flow: içerik başlatıldı"
       : "ÖBA Flow: İLERİ tıklandı");
     console.info("[MEBBIS Video Sonunda İleri] Tıklandı:", labelOf(button));
@@ -333,7 +335,7 @@
     scheduleCourseAdvance();
   }, 750);
   setTimeout(() => {
-    showStatus("ÖBA Flow 2.0.1 hazır");
+    showStatus("ÖBA Flow 2.0.2 hazır");
     scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
