@@ -3,7 +3,8 @@
 
   const DEFAULTS = {
     enabled: true,
-    delayMs: 1000,
+    delayMinMs: 500,
+    delayMaxMs: 1500,
     courseAdvanceEnabled: true
   };
 
@@ -32,6 +33,7 @@
   let courseAdvanceTimer = null;
   let lastCourseNavigation = "";
   let storyStartRequestInFlight = false;
+  let storyStartTimer = null;
   let lastStoryStartRequestAt = 0;
   let lastStoryStartKey = "";
 
@@ -42,7 +44,8 @@
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== "sync") return;
     if (changes.enabled) settings.enabled = changes.enabled.newValue;
-    if (changes.delayMs) settings.delayMs = changes.delayMs.newValue;
+    if (changes.delayMinMs) settings.delayMinMs = changes.delayMinMs.newValue;
+    if (changes.delayMaxMs) settings.delayMaxMs = changes.delayMaxMs.newValue;
     if (changes.courseAdvanceEnabled) {
       settings.courseAdvanceEnabled = changes.courseAdvanceEnabled.newValue;
     }
@@ -55,6 +58,14 @@
       .toLocaleLowerCase("tr-TR")
       .replace(/[›»→]+$/g, "")
       .trim();
+  }
+
+  function randomDelayMs() {
+    const first = Math.max(0, Math.min(10000, Number(settings.delayMinMs) || 0));
+    const second = Math.max(0, Math.min(10000, Number(settings.delayMaxMs) || 0));
+    const minimum = Math.min(first, second);
+    const maximum = Math.max(first, second);
+    return Math.round(minimum + Math.random() * (maximum - minimum));
   }
 
   function visible(element) {
@@ -209,27 +220,35 @@
   }
 
   function scheduleStoryStart() {
-    if (!settings.enabled || storyStartRequestInFlight) return false;
+    if (!settings.enabled) return false;
+    if (storyStartRequestInFlight || storyStartTimer) return true;
     const vector = findStoryStartVector();
     if (!vector) return false;
 
     const key = `${location.href}|${vector.getAttribute("data-model-id") || labelOf(vector)}`;
     if (key === lastStoryStartKey && Date.now() - lastStoryStartRequestAt < 5000) return true;
 
-    storyStartRequestInFlight = true;
     lastStoryStartKey = key;
     lastStoryStartRequestAt = Date.now();
-    chrome.runtime.sendMessage({
-      type: "oba-flow-real-click",
-      label: labelOf(vector),
-      point: mainViewportPoint(vector)
-    }, (response) => {
-      storyStartRequestInFlight = false;
-      if (chrome.runtime.lastError || !response?.ok) {
-        const error = response?.error || chrome.runtime.lastError?.message || "Bilinmeyen hata";
-        console.warn("[ÖBA Flow] Başlangıç katmanı işlenemedi:", error);
-      }
-    });
+    storyStartTimer = setTimeout(() => {
+      storyStartTimer = null;
+      if (!settings.enabled) return;
+      const currentVector = findStoryStartVector();
+      if (!currentVector) return;
+
+      storyStartRequestInFlight = true;
+      chrome.runtime.sendMessage({
+        type: "oba-flow-real-click",
+        label: labelOf(currentVector),
+        point: mainViewportPoint(currentVector)
+      }, (response) => {
+        storyStartRequestInFlight = false;
+        if (chrome.runtime.lastError || !response?.ok) {
+          const error = response?.error || chrome.runtime.lastError?.message || "Bilinmeyen hata";
+          console.warn("[ÖBA Flow] Başlangıç katmanı işlenemedi:", error);
+        }
+      });
+    }, randomDelayMs());
     return true;
   }
 
@@ -286,7 +305,7 @@
       lastCourseNavigation = normalizedPath(stillNext.href);
       showStatus("ÖBA Flow: sıradaki içeriğe geçiliyor");
       stillNext.click();
-    }, Math.max(0, Number(settings.delayMs) || 0));
+    }, randomDelayMs());
   }
 
   function showStatus(message) {
@@ -418,7 +437,7 @@
       if (!settings.enabled) return;
       const stillActive = findNextButton();
       if (stillActive) safeClick(stillActive);
-    }, Math.max(0, Number(settings.delayMs) || 0));
+    }, randomDelayMs());
   }
 
   function scanSoon() {
@@ -463,7 +482,7 @@
     lastHandledVideo = video;
     lastHandledAt = now;
 
-    setTimeout(() => clickWhenReady(), Math.max(0, Number(settings.delayMs) || 0));
+    setTimeout(() => clickWhenReady(), randomDelayMs());
   }, true);
 
   // ÖBA'nın bazı oynatıcıları standart video `ended` olayını üst sayfaya
@@ -486,7 +505,7 @@
       isTopFrame: window.top === window,
       isScormFrame: location.pathname.includes("/uploads/scorm-packages/") && location.pathname.includes("index_lms.html")
     });
-    showStatus("ÖBA Flow 2.4.2 hazır");
+    showStatus("ÖBA Flow 3.0 hazır");
     if (!scheduleStoryStart()) scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);

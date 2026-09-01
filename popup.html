@@ -18,7 +18,7 @@
         <div>
           <h1>ÖBA Flow</h1>
         </div>
-        <span class="version">2.4.2</span>
+        <span class="version">3.0</span>
       </header>
 
       <section class="panel">
@@ -42,11 +42,15 @@
       <section class="panel delay-panel">
         <div class="delay-heading">
           <span>
-            <strong>Tıklama gecikmesi</strong>
+            <strong>Tıklama aralığı</strong>
           </span>
-          <output id="delayValue" for="delaySeconds">1,0 sn</output>
+          <output id="delayValue" for="delayMin delayMax">0,5 — 1,5 sn</output>
         </div>
-        <input id="delaySeconds" class="range" type="range" min="0" max="10" step="0.5" value="1">
+        <div class="dual-range" aria-label="Tıklama gecikmesi aralığı">
+          <div class="range-rail" aria-hidden="true"><span id="rangeFill"></span></div>
+          <input id="delayMin" class="range range-min" type="range" min="0" max="10" step="0.5" value="0.5" aria-label="En kısa gecikme">
+          <input id="delayMax" class="range range-max" type="range" min="0" max="10" step="0.5" value="1.5" aria-label="En uzun gecikme">
+        </div>
         <div class="range-labels"><span>0</span><span>5</span><span>10 sn</span></div>
       </section>
 
