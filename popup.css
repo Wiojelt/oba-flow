@@ -51,14 +51,6 @@ header {
   stroke-linejoin: round;
 }
 
-.eyebrow {
-  margin-bottom: 2px;
-  color: #70d5ff;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: .16em;
-}
-
 h1 {
   margin: 0;
   font-size: 20px;

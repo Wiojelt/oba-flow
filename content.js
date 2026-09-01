@@ -26,6 +26,7 @@
   let scanTimer = null;
   let clickTimer = null;
   let lastClickedElement = null;
+  let lastClickedLabel = "";
   let lastClickAt = 0;
   let lastClickedUrl = "";
   let courseAdvanceTimer = null;
@@ -96,7 +97,11 @@
     const index = NEXT_LABELS.findIndex((wanted) =>
       label === wanted || label.startsWith(`${wanted} `)
     );
-    if (index < 0 || !visible(element) || !enabled(element)) return -1;
+    const recentlyClicked = element === lastClickedElement &&
+      label === lastClickedLabel &&
+      location.href === lastClickedUrl &&
+      Date.now() - lastClickAt < 15000;
+    if (index < 0 || recentlyClicked || !visible(element) || !enabled(element)) return -1;
 
     let score = 100 - index;
     if (element.tagName === "BUTTON") score += 20;
@@ -244,17 +249,20 @@
 
   function safeClick(button) {
     const now = Date.now();
+    const currentLabel = labelOf(button);
     const sameUnchangedButton = button === lastClickedElement &&
+      currentLabel === lastClickedLabel &&
       location.href === lastClickedUrl &&
       now - lastClickAt < 15000;
     if (sameUnchangedButton) return false;
 
     lastClickedElement = button;
+    lastClickedLabel = currentLabel;
     lastClickAt = now;
     lastClickedUrl = location.href;
     button.scrollIntoView({ block: "center", behavior: "smooth" });
     button.click();
-    const clickedLabel = labelOf(button);
+    const clickedLabel = currentLabel;
     showStatus(/^(başlamak için|kursu başlat)/.test(clickedLabel)
       ? "ÖBA Flow: içerik başlatıldı"
       : "ÖBA Flow: İLERİ tıklandı");
@@ -335,7 +343,7 @@
     scheduleCourseAdvance();
   }, 750);
   setTimeout(() => {
-    showStatus("ÖBA Flow 2.0.2 hazır");
+    showStatus("ÖBA Flow 2.0.3 hazır");
     scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
