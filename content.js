@@ -31,6 +31,9 @@
   let lastClickedUrl = "";
   let courseAdvanceTimer = null;
   let lastCourseNavigation = "";
+  let storyStartRequestInFlight = false;
+  let lastStoryStartRequestAt = 0;
+  let lastStoryStartKey = "";
 
   chrome.storage.sync.get(DEFAULTS, (saved) => {
     settings = { ...DEFAULTS, ...saved };
@@ -162,6 +165,36 @@
       .map((element) => ({ element, score: scoreCandidate(element) }))
       .filter(({ score }) => score >= 0)
       .sort((a, b) => b.score - a.score)[0]?.element || null;
+  }
+
+  function findStoryStartVector() {
+    return [...document.querySelectorAll(".slide-object-vectorshape[data-acc-text], [data-acc-text]")]
+      .find((element) => {
+        const label = normalize(element.getAttribute("data-acc-text"));
+        return visible(element) && enabled(element) &&
+          (label === "başlamak için tıklayınız." || label === "başlamak için tıklayınız");
+      }) || null;
+  }
+
+  function scheduleStoryStart() {
+    if (!settings.enabled || storyStartRequestInFlight) return false;
+    const vector = findStoryStartVector();
+    if (!vector) return false;
+
+    const key = `${location.href}|${vector.getAttribute("data-model-id") || labelOf(vector)}`;
+    if (key === lastStoryStartKey && Date.now() - lastStoryStartRequestAt < 5000) return true;
+
+    storyStartRequestInFlight = true;
+    lastStoryStartKey = key;
+    lastStoryStartRequestAt = Date.now();
+    chrome.runtime.sendMessage({ type: "oba-flow-real-click", label: labelOf(vector) }, (response) => {
+      storyStartRequestInFlight = false;
+      if (chrome.runtime.lastError || !response?.ok) {
+        const error = response?.error || chrome.runtime.lastError?.message || "Bilinmeyen hata";
+        console.warn("[ÖBA Flow] Başlangıç katmanı işlenemedi:", error);
+      }
+    });
+    return true;
   }
 
   function normalizedPath(value) {
@@ -355,7 +388,7 @@
   function scanSoon() {
     clearTimeout(scanTimer);
     scanTimer = setTimeout(() => {
-      scheduleActiveButtonClick();
+      if (!scheduleStoryStart()) scheduleActiveButtonClick();
       scheduleCourseAdvance();
     }, 80);
   }
@@ -408,12 +441,17 @@
   });
 
   setInterval(() => {
-    scheduleActiveButtonClick();
+    if (!scheduleStoryStart()) scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 750);
   setTimeout(() => {
-    showStatus("ÖBA Flow 2.2 hazır");
-    scheduleActiveButtonClick();
+    chrome.runtime.sendMessage({
+      type: "oba-flow-frame-ready",
+      isTopFrame: window.top === window,
+      isScormFrame: location.pathname.includes("/uploads/scorm-packages/") && location.pathname.includes("index_lms.html")
+    });
+    showStatus("ÖBA Flow 2.4 hazır");
+    if (!scheduleStoryStart()) scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
 

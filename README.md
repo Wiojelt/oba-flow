@@ -4,7 +4,7 @@
 
 ÖBA içeriklerinde görünen **Kursu Başlat** / **Başlamak için tıklayınız** düğmelerini ve video sonunda etkinleşen **İLERİ** düğmesini kullanır. Mevcut içerik `check_circle` ile tamamlandığında listedeki hemen sonraki kilidi açılmış içeriğe geçebilir.
 
-SCORM oynatıcısının yalnızca gerçek fare girdisi kabul eden başlangıç katmanı tarayıcının DOM kutu modeliyle bulunur; gerçek SVG alanına tıklanır ve bağlantı hemen kapatılır. Bu tıklama sırasında aynı sekmede DevTools açık olmamalıdır.
+SCORM oynatıcısının yalnızca gerçek girdiyi kabul eden başlangıç katmanı tarayıcının DOM kutu modeliyle bulunur. Alt çerçevedeki hedef ana sayfa koordinatına çevrilir; önce fare, gerekirse dokunma ve klavye girdisi kullanılır. Bu işlem sırasında aynı sekmede DevTools açık olmamalıdır.
 
 ## Kurulum
 
