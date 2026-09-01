@@ -267,34 +267,9 @@
 
     if (button.matches("[data-acc-text], .slide-object-vectorshape")) {
       const rect = button.getBoundingClientRect();
-      let clientX = rect.left + rect.width / 2;
-      let clientY = rect.top + rect.height / 2;
-      let frameWindow = window;
-
-      try {
-        while (frameWindow !== frameWindow.top) {
-          const frame = frameWindow.frameElement;
-          if (!frame) throw new Error("Üst çerçeve konumu bulunamadı");
-          const frameRect = frame.getBoundingClientRect();
-          const scaleX = frameWindow.innerWidth > 0
-            ? frameRect.width / frameWindow.innerWidth
-            : 1;
-          const scaleY = frameWindow.innerHeight > 0
-            ? frameRect.height / frameWindow.innerHeight
-            : 1;
-          clientX = frameRect.left + clientX * scaleX;
-          clientY = frameRect.top + clientY * scaleY;
-          frameWindow = frameWindow.parent;
-        }
-      } catch {
-        dispatchSyntheticVectorClick(button, rect.left + rect.width / 2, rect.top + rect.height / 2);
-        return true;
-      }
-
       chrome.runtime.sendMessage({
         type: "oba-flow-real-click",
-        x: clientX,
-        y: clientY
+        label: currentLabel
       }, (response) => {
         if (chrome.runtime.lastError || !response?.ok) {
           dispatchSyntheticVectorClick(button, rect.left + rect.width / 2, rect.top + rect.height / 2);
@@ -437,7 +412,7 @@
     scheduleCourseAdvance();
   }, 750);
   setTimeout(() => {
-    showStatus("ÖBA Flow 2.1.2 hazır");
+    showStatus("ÖBA Flow 2.2 hazır");
     scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
