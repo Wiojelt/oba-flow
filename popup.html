@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ÖBA Flow</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="glass-shell">
+      <header>
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <path d="M17 12.5 29.5 24 17 35.5"/>
+            <path d="M27 12.5 39.5 24 27 35.5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="eyebrow">WIOJELT LABS</div>
+          <h1>ÖBA Flow</h1>
+        </div>
+        <span class="version">2.0</span>
+      </header>
+
+      <section class="panel">
+        <label class="setting-row">
+          <span>
+            <strong>Otomatik ileri</strong>
+            <small>Etkinleşen İLERİ düğmesine basar</small>
+          </span>
+          <input id="enabled" class="toggle-input" type="checkbox">
+          <span class="toggle" aria-hidden="true"></span>
+        </label>
+
+        <label class="setting-row">
+          <span>
+            <strong>İçerik geçişi</strong>
+            <small>check_circle sonrası sıradakine geçer</small>
+          </span>
+          <input id="courseAdvanceEnabled" class="toggle-input" type="checkbox">
+          <span class="toggle" aria-hidden="true"></span>
+        </label>
+      </section>
+
+      <section class="panel delay-panel">
+        <div class="delay-heading">
+          <span>
+            <strong>Tıklama gecikmesi</strong>
+            <small>İleri etkinleştikten sonra</small>
+          </span>
+          <output id="delayValue" for="delaySeconds">1,0 sn</output>
+        </div>
+        <input id="delaySeconds" class="range" type="range" min="0" max="10" step="0.5" value="1">
+        <div class="range-labels"><span>0</span><span>5</span><span>10 sn</span></div>
+      </section>
+
+      <footer>
+        <span class="status-dot"></span>
+        <span id="saved" role="status" aria-live="polite">Hazır</span>
+        <span class="contact">@wiojelt</span>
+      </footer>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

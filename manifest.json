@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "ÖBA Flow",
+  "version": "2.0.0",
+  "description": "ÖBA içeriklerinde video sonu İleri akışını ve tamamlanan içerikten sonraki geçişi kolaylaştırır.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.meb.gov.tr/*",
+    "https://*.eba.gov.tr/*",
+    "https://*.oba.gov.tr/*"
+  ],
+  "action": {
+    "default_title": "ÖBA Flow",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png",
+      "48": "assets/icon-48.png",
+      "128": "assets/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.meb.gov.tr/*",
+        "https://*.eba.gov.tr/*",
+        "https://*.oba.gov.tr/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true
+    }
+  ]
+}

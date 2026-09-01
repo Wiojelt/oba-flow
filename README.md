@@ -1,0 +1,26 @@
+![ÖBA Flow banner](assets/banner.svg)
+
+# ÖBA Flow
+
+ÖBA içeriklerinde video sonunda etkinleşen **İLERİ** düğmesine basar. Mevcut içerik `check_circle` ile tamamlandığında listedeki hemen sonraki kilidi açılmış içeriğe geçebilir.
+
+## Kurulum
+
+1. ZIP'i bir klasöre çıkarın.
+2. Brave'de `brave://extensions` sayfasını açın.
+3. **Geliştirici modu**nu etkinleştirin.
+4. **Paketlenmemiş öğe yükle** ile klasörü seçin.
+5. ÖBA sayfasını yenileyin.
+
+Popup üzerinden otomatik ileri ve içerik geçişi ayrı ayrı kapatılabilir. Tıklama gecikmesi 0–10 saniye arasında sabit olarak seçilir.
+
+## Sınırlar
+
+- İçeriği ileri sarmaz veya tamamlanmamış içeriği tamamlanmış göstermez.
+- Yalnızca mevcut öğe `check_circle` olduğunda sıradaki kilidi açılmış öğeye geçer; son öğede durur.
+- Sekme görünürlüğünü ya da tarayıcı odak durumunu taklit etmez.
+- `Tamamla` veya `Bitir` düğmelerine basmaz.
+
+Erişim ve iletişim: **@wiojelt**
+
+Copyright © 2026 wiojelt. All rights reserved.
