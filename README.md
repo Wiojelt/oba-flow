@@ -2,7 +2,7 @@
 
 # ÖBA Flow
 
-ÖBA içeriklerinde video sonunda etkinleşen **İLERİ** düğmesine basar. Mevcut içerik `check_circle` ile tamamlandığında listedeki hemen sonraki kilidi açılmış içeriğe geçebilir.
+ÖBA içeriklerinde görünen **Başlamak için tıklayınız** düğmesini ve video sonunda etkinleşen **İLERİ** düğmesini kullanır. Mevcut içerik `check_circle` ile tamamlandığında listedeki hemen sonraki kilidi açılmış içeriğe geçebilir.
 
 ## Kurulum
 

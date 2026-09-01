@@ -14,7 +14,9 @@
     "sonraki",
     "sonraki video",
     "sonraki ders",
-    "eğitime devam et"
+    "eğitime devam et",
+    "başlamak için tıklayınız.",
+    "başlamak için tıklayınız"
   ];
 
   let settings = { ...DEFAULTS };
@@ -250,7 +252,10 @@
     lastClickedUrl = location.href;
     button.scrollIntoView({ block: "center", behavior: "smooth" });
     button.click();
-    showStatus("Oto-ileri: İLERİ tıklandı");
+    const clickedLabel = labelOf(button);
+    showStatus(clickedLabel.startsWith("başlamak için")
+      ? "ÖBA Flow: içerik başlatıldı"
+      : "ÖBA Flow: İLERİ tıklandı");
     console.info("[MEBBIS Video Sonunda İleri] Tıklandı:", labelOf(button));
     return true;
   }
@@ -328,7 +333,7 @@
     scheduleCourseAdvance();
   }, 750);
   setTimeout(() => {
-    showStatus("ÖBA Flow 2.0 hazır");
+    showStatus("ÖBA Flow 2.0.1 hazır");
     scheduleActiveButtonClick();
     scheduleCourseAdvance();
   }, 400);
